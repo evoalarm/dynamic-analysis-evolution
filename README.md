@@ -8,26 +8,21 @@ The study evaluates two Python dynamic analyzers, **DyLin** and **PyMOP**, acros
 
 | Path | Contents |
 |------|----------|
-| [`data/project_metadata/`](data/project_metadata/) | Project list and repository-level statistics |
-| [`data/cumulative_results/`](data/cumulative_results/) | Per-project, per-commit analyzer outputs (161 CSV files) |
-| [`data/violation_change_results/`](data/violation_change_results/) | Per-project violation changes between consecutive commits (161 CSV files) |
-| [`data/last_commit_results_with_sloc.csv`](data/last_commit_results_with_sloc.csv) | Latest-commit analyzer results with project SLOC metadata |
-| [`data/manual_inspection/`](data/manual_inspection/) | Manual classifications of alarms and alarm-changing commits |
-| [`data/survey/`](data/survey/) | Developer questionnaire and anonymized responses |
-| [`raw_results/`](raw_results/) | Monitored commit lists and project metadata (`results.zip` is on [release v1.0.0](https://github.com/evoalarm/dynamic-analysis-evolution/releases/tag/v1.0.0)) |
-| [`scripts/analyze_results/`](scripts/analyze_results/) | Scripts to process raw outputs into CSV datasets |
+| [`data/`](data/) | Processed datasets, manual inspection labels, and survey materials |
+| [`raw_results/`](raw_results/) | Raw experiment metadata; per-commit zip archives on [release v1.0.0](https://github.com/evoalarm/dynamic-analysis-evolution/releases/tag/v1.0.0) |
+| [`scripts/`](scripts/) | Scripts to process raw analyzer outputs into CSV datasets |
 | [`LICENSE`](LICENSE) | MIT license |
 
 ## Data included in this artifact
 
-### Project metadata
+### Project metadata ([`data/project_metadata/`](data/project_metadata/))
 
 | File | Description |
 |------|-------------|
-| [`data/project_metadata/projects.csv`](data/project_metadata/projects.csv) | 161 studied projects with internal id, display name, GitHub URL, and latest analyzed commit SHA |
-| [`data/project_metadata/project_stats.csv`](data/project_metadata/project_stats.csv) | Per-project stars, commit count, repository age (years), and notes |
+| [`projects.csv`](data/project_metadata/projects.csv) | 161 studied projects with internal id, display name, GitHub URL, and latest analyzed commit SHA |
+| [`project_stats.csv`](data/project_metadata/project_stats.csv) | Per-project stars, commit count, repository age (years), and notes |
 
-### Raw analyzer outputs
+### Raw analyzer outputs ([`raw_results/`](raw_results))
 
 [`raw_results/`](raw_results/) holds metadata for the unprocessed inputs used to build the CSV datasets in the **Analyzer results** section. The large per-commit zip archives are **not stored in this repository**; download `results.zip` (~1 GB) from [release v1.0.0](https://github.com/evoalarm/dynamic-analysis-evolution/releases/tag/v1.0.0).
 
@@ -48,12 +43,12 @@ Each studied project has two companion CSV files:
 
 [`data/last_commit_results_with_sloc.csv`](data/last_commit_results_with_sloc.csv) is a single-table extract of the latest analyzed commit per project (161 projects, four rows each). It has the same columns as the cumulative-results files, plus `project_sloc`, `project_sloc_files`, and `project_sloc_status` for project size information.
 
-### Manual inspection data
+### Manual inspection ([`data/manual_inspection/`](data/manual_inspection/))
 
 | File | Description |
 |------|-------------|
-| [`data/manual_inspection/alarm_inspection_results.csv`](data/manual_inspection/alarm_inspection_results.csv) | Manual classification of individual alarms reported at the latest analyzed commits |
-| [`data/manual_inspection/alarm_change_inspection_results.csv`](data/manual_inspection/alarm_change_inspection_results.csv) | Manual classification of commits where alarms were introduced or removed, including root-cause labels |
+| [`alarm_inspection_results.csv`](data/manual_inspection/alarm_inspection_results.csv) | Manual classification of individual alarms reported at the latest analyzed commits |
+| [`alarm_change_inspection_results.csv`](data/manual_inspection/alarm_change_inspection_results.csv) | Manual classification of commits where alarms were introduced or removed, including root-cause labels |
 
 **`alarm_inspection_results.csv`** — important columns:
 
@@ -67,13 +62,13 @@ Each studied project has two companion CSV files:
 - `num_new_violations`, `new_violations`, `new_violations_reasons`: introduced alarms and assigned reasons
 - `num_old_violations`, `old_violations`, `old_violations_reasons`: removed alarms and assigned reasons
 
-### Survey materials
+### Survey materials ([`data/survey/`](data/survey/))
 
 | File | Description |
 |------|-------------|
-| [`data/survey/questionnaire.pdf`](data/survey/questionnaire.pdf) | Questionnaire shown to project developers |
-| [`data/survey/questionnaire_responses.pdf`](data/survey/questionnaire_responses.pdf) | De-identified summary of questionnaire responses |
-| [`data/survey/additional_questionnaire_responses.pdf`](data/survey/additional_questionnaire_responses.pdf) | Additional responses received through email |
+| [`questionnaire.pdf`](data/survey/questionnaire.pdf) | Questionnaire shown to project developers |
+| [`questionnaire_responses.pdf`](data/survey/questionnaire_responses.pdf) | De-identified summary of questionnaire responses |
+| [`additional_questionnaire_responses.pdf`](data/survey/additional_questionnaire_responses.pdf) | Additional responses received through email |
 
 ## Reproduce experiment data
 
@@ -83,7 +78,7 @@ _To be documented._
 
 ### Process raw data into cumulative and violation-change results
 
-The scripts in [`scripts/analyze_results/`](scripts/analyze_results/) turn raw per-commit analyzer outputs into the two CSV datasets shipped in [`data/cumulative_results/`](data/cumulative_results/) and [`data/violation_change_results/`](data/violation_change_results/).
+The scripts in [`scripts/analyze_results/`](scripts/analyze_results/) turn raw per-commit analyzer outputs into the two CSV datasets in [`data/cumulative_results/`](data/cumulative_results/) and [`data/violation_change_results/`](data/violation_change_results/).
 
 #### Prerequisites
 
