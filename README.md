@@ -19,18 +19,18 @@ The study evaluates two Python dynamic analyzers, **DyLin** and **PyMOP**, acros
 
 | File | Description |
 |------|-------------|
-| [`projects.csv`](data/project_metadata/projects.csv) | 161 studied projects with internal id, display name, GitHub URL, and latest analyzed commit SHA |
+| [`projects.csv`](data/project_metadata/projects.csv) | 161 studied projects with id, GitHub URL, and latest analyzed commit SHA |
 | [`project_stats.csv`](data/project_metadata/project_stats.csv) | Per-project stars, commit count, repository age (years), and notes |
 
 ### Raw analyzer outputs ([`raw_results/`](raw_results))
 
-[`raw_results/`](raw_results/) holds metadata for the unprocessed inputs used to build the CSV datasets in the **Analyzer results** section. The large per-commit zip archives are **not stored in this repository**; download `results.zip` (~1 GB) from [release v1.0.0](https://github.com/evoalarm/dynamic-analysis-evolution/releases/tag/v1.0.0).
+It holds metadata for the unprocessed inputs used to build the datasets in the **Analyzer results** section. The large per-commit zip archives are **not stored in this repository**; download `results.zip` (~1 GB) from [release v1.0.0](https://github.com/evoalarm/dynamic-analysis-evolution/releases/tag/v1.0.0).
 
 | File / directory | In repository | Description |
 |------------------|---------------|-------------|
 | `results.zip` | [Release v1.0.0](https://github.com/evoalarm/dynamic-analysis-evolution/releases/tag/v1.0.0) only | Per-commit zip archives for all 161 projects. Each archive contains logs, test reports, and analyzer output for one commit and run type (`original`, `pymop`, `pymop-libs`, `dylin`). |
-| [`raw_results/monitored_commits/`](raw_results/monitored_commits/) | Yes | 161 text files (`{project_name}_commits.txt`) listing the successfully analyzed commit SHAs per project, in chronological order. |
-| [`raw_results/projects.csv`](raw_results/projects.csv) | Yes | Same 161 projects as [`data/project_metadata/projects.csv`](data/project_metadata/projects.csv). |
+| [`monitored_commits/`](raw_results/monitored_commits/) | Yes | 161 text files (`{project_name}_commits.txt`) listing the successfully analyzed commit SHAs per project, in chronological order. |
+| [`projects.csv`](raw_results/projects.csv) | Yes | Same 161 projects as [`data/project_metadata/projects.csv`](data/project_metadata/projects.csv). |
 
 ### Analyzer results
 
@@ -38,7 +38,7 @@ Each studied project has two companion CSV files:
 
 | Directory | File pattern | Description |
 |-----------|--------------|-------------|
-| [`data/cumulative_results/`](data/cumulative_results/) | `{project_name}-cumulative-results.csv` | One row per commit and run configuration. Covers baseline pytest (`original`), DyLin (`dylin`), PyMOP on project code (`pymop`), and PyMOP with third-party libraries (`pymop_libs`). Includes test outcomes, coverage, runtime overhead, and violation counts. |
+| [`data/cumulative_results/`](data/cumulative_results/) | `{project_name}-cumulative-results.csv` | One row per commit and run configuration. Covers baseline pytest (`original`), DyLin (`dylin`), PyMOP on project code (`pymop`), and PyMOP with third-party libraries (`pymop_libs`). Includes test outcomes, coverage, runtime overhead, and alarm counts. |
 | [`data/violation_change_results/`](data/violation_change_results/) | `{project_name}.csv` | One row per parent -> child commit pair. Records alarms introduced, removed, and present before/after each change. |
 
 [`data/last_commit_results_with_sloc.csv`](data/last_commit_results_with_sloc.csv) is a single-table extract of the latest analyzed commit per project (161 projects, four rows each). It has the same columns as the cumulative-results files, plus `project_sloc`, `project_sloc_files`, and `project_sloc_status` for project size information.
