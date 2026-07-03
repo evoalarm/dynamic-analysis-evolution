@@ -13,6 +13,7 @@ The study evaluates two Python dynamic analyzers, **DyLin** and **PyMOP**, acros
 | [`data/violation_change_results/`](data/violation_change_results/) | Per-project violation changes between consecutive commits (161 CSV files) |
 | [`data/manual_inspection/`](data/manual_inspection/) | Manual classifications of alarms and alarm-changing commits |
 | [`data/survey/`](data/survey/) | Developer questionnaire and anonymized responses |
+| [`scripts/analyze_results/`](scripts/analyze_results/) | Scripts to process raw analyzer outputs into CSV datasets |
 | [`LICENSE`](LICENSE) | MIT license |
 
 ## Data included in this artifact
@@ -60,3 +61,71 @@ Each studied project has two companion CSV files, named after the `project` id i
 | [`data/survey/questionnaire.pdf`](data/survey/questionnaire.pdf) | Questionnaire shown to project developers |
 | [`data/survey/questionnaire_responses.pdf`](data/survey/questionnaire_responses.pdf) | De-identified summary of questionnaire responses |
 | [`data/survey/additional_questionnaire_responses.pdf`](data/survey/additional_questionnaire_responses.pdf) | Additional responses received through email |
+
+## Reproduce experiment data
+
+### Collect raw analyzer outputs
+
+_To be documented._
+
+### Process raw data into cumulative and violation-change results
+
+The scripts in [`scripts/analyze_results/`](scripts/analyze_results/) turn raw per-commit analyzer outputs into the two CSV datasets shipped in [`data/cumulative_results/`](data/cumulative_results/) and [`data/violation_change_results/`](data/violation_change_results/).
+
+#### Prerequisites
+
+From [`scripts/analyze_results/`](scripts/analyze_results/):
+
+```bash
+pip install -r requirements.txt
+```
+
+You also need:
+
+| Input | Location | Description |
+|-------|----------|-------------|
+| Project list | [`scripts/analyze_results/projects.csv`](scripts/analyze_results/projects.csv) | Same projects as [`data/project_metadata/projects.csv`](data/project_metadata/projects.csv) |
+| Raw analyzer outputs | `scripts/analyze_results/results/{project}/*.zip` | One zip archive per analyzed commit, produced by the analyzer pipeline |
+
+#### Processing pipeline
+
+From [`scripts/analyze_results/`](scripts/analyze_results/):
+
+```bash
+python parse_results.py
+```
+
+`parse_results.py` orchestrates all three steps for every project in `results/`. For each project it:
+
+1. Unzips raw archives into `results_unzipped/{project}/`.
+2. Determines the valid commit sequence via [`get_commits_txt.sh`](scripts/analyze_results/get_commits_txt.sh) and `commits/all_commits/{project}_all_commits.txt`.
+3. Parses each commit's four run folders into rows and appends them to the per-project cumulative CSV.
+4. Flags commits with inconsistent or failing test results (`is_test_failure_related`) and writes the filtered cumulative CSV.
+5. Diffs violations between consecutive valid commits using git history ([`track_commit_changes.py`](scripts/analyze_results/track_commit_changes.py)) and writes the violation-change CSV.
+
+Run the full pipeline:
+
+```bash
+cd scripts/analyze_results
+python parse_results.py
+```
+
+Run the filtering step for a single project:
+
+```bash
+python filter_test_failure_commits.py {project}
+python filter_new_violations.py \
+  filtered_cumulative_results/{project}-cumulative-results.csv \
+  repos/{project} \
+  commits/monitored_commits/{project}_commits.txt \
+  {project}
+```
+
+#### Output files
+
+| Pipeline output | Artifact location | Description |
+|-----------------|-------------------|-------------|
+| `filtered_cumulative_results/{project}-cumulative-results.csv` | [`data/cumulative_results/{project}-cumulative-results.csv`](data/cumulative_results/) | Per-commit rows for all four run configurations |
+| `final_results/{project}.csv` | [`data/violation_change_results/{project}.csv`](data/violation_change_results/) | Per-commit-pair violation introductions and removals |
+
+Copy or symlink the generated files into `data/` to match the artifact layout included in this repository.
