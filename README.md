@@ -66,7 +66,6 @@ Each studied project has two companion CSV files:
 - `project`, `current_commit_sha`, `parent_commit_sha`, `current_commit_message`: commit under inspection
 - `num_new_violations`, `new_violations`, `new_violations_reasons`: introduced alarms and assigned reasons
 - `num_old_violations`, `old_violations`, `old_violations_reasons`: removed alarms and assigned reasons
-- `same_old_new_test_results`: whether baseline test outcomes were comparable across the two commits
 
 ### Survey materials
 
