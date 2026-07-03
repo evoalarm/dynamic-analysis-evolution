@@ -10,7 +10,8 @@ The study evaluates two Python dynamic analyzers, **DyLin** and **PyMOP**, acros
 |------|----------|
 | [`data/`](data/) | Processed datasets, manual inspection labels, and survey materials |
 | [`raw_results/`](raw_results/) | Raw experiment metadata; per-commit zip archives on [release v1.0.0](https://github.com/evoalarm/dynamic-analysis-evolution/releases/tag/v1.0.0) |
-| [`scripts/`](scripts/) | Scripts to process raw analyzer outputs into CSV datasets |
+| [`scripts/`](scripts/) | Scripts to collect raw analyzer outputs, run experiments via Docker, and process them into CSV datasets |
+| [`docker/`](docker/) | Dockerfile for the experiment environment |
 | [`LICENSE`](LICENSE) | MIT license |
 
 ## Data included in this artifact
@@ -74,7 +75,43 @@ Each studied project has two companion CSV files:
 
 ### Collect raw analyzer outputs
 
-_To be documented._
+The scripts in [`scripts/run_analyzers/`](scripts/run_analyzers/) run DyLin, PyMOP, and baseline pytest on project commits via Docker. Use [`run_experiment.sh`](scripts/run_analyzers/run_experiment.sh) to build the image and launch a run.
+
+Each commit produces four zip archives (`original`, `pymop`, `pymop-libs`, `dylin`) under `experiment_output/<task_name>/<project_name>/results/`.
+
+#### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) (install if you do not have it)
+- Enough disk space for cloned repositories, virtual environments, and result archives (several GB per project)
+
+#### Build and run with Docker
+
+```bash
+# Build the image
+./scripts/run_analyzers/run_experiment.sh build
+
+# Run 500 most recent Python-touching commits per project on all 161 projects
+./scripts/run_analyzers/run_experiment.sh run raw_results/projects.csv 500 full_run
+
+# Optional: run multiple projects in parallel (default is 1)
+PARALLEL_JOBS=2 ./scripts/run_analyzers/run_experiment.sh run raw_results/projects.csv 500 full_run
+```
+
+Results are written to [`experiment_output/`](experiment_output/) on the host:
+
+| Path | Description |
+|------|-------------|
+| `experiment_output/<task_name>/<project_name>/results/*.zip` | Per-commit analyzer outputs |
+| `experiment_output/<task_name>/<project_name>/logs/` | Execution logs |
+| `experiment_output/<task_name>/commits_duration.csv` | Total runtime per commit |
+
+#### Prepare outputs for the processing pipeline
+
+Copy the generated zips into the analyze-results input directory with [`copy_experiment_results.sh`](scripts/analyze_results/copy_experiment_results.sh):
+
+```bash
+./scripts/analyze_results/copy_experiment_results.sh full_run
+```
 
 ### Process raw data into cumulative and violation-change results
 

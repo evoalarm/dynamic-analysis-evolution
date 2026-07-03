@@ -1,2 +1,5 @@
 **/.DS_Store
+**/__pycache__/
+
 raw_results/results.zip
+experiment_output/
