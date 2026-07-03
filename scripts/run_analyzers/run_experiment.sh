@@ -34,6 +34,10 @@ function run_container() {
     exit 1
   fi
 
+  if [[ "${projects_csv}" != /* ]]; then
+    projects_csv="$(cd "$(dirname "${projects_csv}")" && pwd)/$(basename "${projects_csv}")"
+  fi
+
   mkdir -p "${OUTPUT_DIR}"
 
   local projects_mount="/experiment/projects.csv"
